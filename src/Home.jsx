@@ -12,7 +12,7 @@ function Home() {
             className="home min-h-screen flex flex-col justify-center items-center">
 
             <div className="herobanner">
-                <h1 className="font-extrabold text-transparent text-8xl bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">CoderTab</h1>
+                <h1 className="font-extrabold text-transparent text-8xl bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">LiteCode</h1>
                 <div className="flex flex-wrap justify-center gap-8 ">
                     <Card title="Code Editor" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus
                                 sodales ex justo, vel congue nisl feugiat id." image="https://user-images.githubusercontent.com/68281476/221411823-1e5222a1-dc0b-4f14-af09-eebb20c531c9.png" link="./codeeditor" />
@@ -74,7 +74,7 @@ function Home() {
                             </h5>
                             <div className="mt-6">
                                 <a
-                                    href="https://github.com/abhi9720"
+                                    href="https://github.com/BLAZEEDITZ"
                                     className="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-800 dark:bg-white dark:border-gray-700 dark:text-gray-900 dark:hover:bg-gray-200 mr-2 mb-2"
                                     type="button"
                                     style={{ transition: 'all .15s ease' }}
@@ -84,7 +84,7 @@ function Home() {
 
 
                                 <a
-                                    href="https://twitter.com/ishutiw85007243?t=ZvpoW3_PhYVNQ60pO7pKUA&s=08"
+                                    href="https://github.com/BLAZEEDITZ"
                                     className="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-800 dark:bg-white dark:border-gray-700 dark:text-gray-900 dark:hover:bg-gray-200 mr-2 mb-2"
                                     type="button"
                                     style={{ transition: 'all .15s ease' }}
@@ -92,7 +92,7 @@ function Home() {
                                     <FaTwitter className="mr-1" /> Twitter
                                 </a>
                                 <a
-                                    href="https://instagram.com/ishutiwari75"
+                                    href="https://www.instagram.com/yogesh_h4x/"
                                     className="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-800 dark:bg-white dark:border-gray-700 dark:text-gray-900 dark:hover:bg-gray-200 mr-2 mb-2"
                                     type="button"
                                     style={{ transition: 'all .15s ease' }}
@@ -100,7 +100,7 @@ function Home() {
                                     <FaInstagram className="mr-1" />   Instagram
                                 </a>
                                 <a
-                                    href="https://linkedin.com/in/abhi9720"
+                                    href="https://www.instagram.com/yogesh_h4x/"
                                     className="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-800 dark:bg-white dark:border-gray-700 dark:text-gray-900 dark:hover:bg-gray-200 mr-2 mb-2"
                                     type="button"
                                     style={{ transition: 'all .15s ease' }}
@@ -114,7 +114,7 @@ function Home() {
                     <div className="flex flex-wrap items-center md:justify-between justify-center">
                         <div className="w-full  px-4">
                             <div className="text-sm text-white font-semibold py-1">
-                                © {new Date().getFullYear()} CoderTab
+                                © {new Date().getFullYear()} LiteCode
                             </div>
                         </div>
 

@@ -20,13 +20,10 @@ import copy from 'copy-to-clipboard';
 import StopWatch from './StopWatch';
 import { Link } from 'react-router-dom';
 
-
-
-//Compiler API  deploy on server:  https://github.com/Jaagrav/CodeX-API/tree/master/executeCode
-//Realtime code update : https://github.com/RisingGeek/CodeEditor
+//Compiler API: OneCompiler
 const defaultCode = `// Type Your code here 1`;
-const CodeEditor = () => {
 
+const CodeEditor = () => {
 
     function loadTheme() {
         let th = { label: 'Blackboard', value: 'blackboard', key: 'blackboard' }
@@ -35,7 +32,6 @@ const CodeEditor = () => {
             th = JSON.parse(localStorage.getItem("usertheme"))
         }
         return th;
-
     }
 
     const [code, setCode] = useState(defaultCode);
@@ -48,19 +44,15 @@ const CodeEditor = () => {
     const [language, setLanguage] = useState(JSON.parse(localStorage.getItem("language")) || languageOptions[0]);
     const [offlineStatus, SetofflineStatus] = useState(false)
 
-
-
     function setOffline() {
         SetofflineStatus(true);
     }
     function setOnline() {
         SetofflineStatus(false)
     }
-    // reset code 
+
     function ctrlplusr(e) {
-
         if (e.keyCode === 69 && e.ctrlKey) {
-
             e.preventDefault()
             resetCode()
         }
@@ -70,9 +62,7 @@ const CodeEditor = () => {
         }
     }
 
-
     useEffect(() => {
-
         window.addEventListener('online', setOnline);
         window.addEventListener('offline', setOffline);
         window.addEventListener('keydown', ctrlplusr);
@@ -83,9 +73,6 @@ const CodeEditor = () => {
         }
     })
 
-
-
-
     const onChange = (action, data) => {
         switch (action) {
             case "code": {
@@ -93,35 +80,23 @@ const CodeEditor = () => {
                 window.localStorage.setItem(language.value, JSON.stringify(data))
                 break;
             }
-
             default: {
                 console.warn("case not handled!", action, data);
             }
         }
     };
 
-
-
     useEffect(() => {
         const prevCode = JSON.parse(localStorage.getItem(language.value));
         setCode(prevCode || snippet(language.value));
-
     }, [language.value]);
-
-
-
-
 
     const ctrlPress = useKeyPress("Control");
     const key_run = useKeyPress("F9");
     const key_save = useKeyPress("q")
     const key_fullScreen = useKeyPress("F11");
 
-
-
-
     const onSelectChange = (sl) => {
-
         setLanguage(sl);
         setOutputDetails(null);
         localStorage.setItem("language", JSON.stringify(sl));
@@ -131,273 +106,138 @@ const CodeEditor = () => {
         const element = document.createElement("a");
         const file = new Blob([data], { type: 'text/plain' });
         element.href = URL.createObjectURL(file);
-
         element.download = `${language.value}-code.txt`;
-        document.body.appendChild(element); // Required for this to work in FireFox
+        document.body.appendChild(element);
         element.click();
-
     }
-
-    // function ShareTextFile() {
-    //     console.log(this);
-    //     let element = document.createElement("a");
-
-    //     element.href = "whatsapp://send?text=" + JSON.stringify(code);
-
-    //     document.body.appendChild(element);
-
-    //     element.click();
-
-
-
-    // }
 
     useEffect(() => {
         if (key_run) {
             handleCompile();
         }
-        // eslint-disable-next-line
     }, [ctrlPress, key_run]);
 
     useEffect(() => {
         if (ctrlPress && key_save) {
-
             downloadTxtFile(code)
         }
-        // eslint-disable-next-line
     }, [ctrlPress, key_save, code]);
-
-
-
 
     async function handleThemeChange(th) {
         const theme = th;
-
         console.log(theme);
         if (["light", "vs-dark"].includes(theme.value)) {
             setTheme(theme);
         } else {
-
             console.log("calling define theme ");
             defineTheme(theme.value)
                 .then((_) => {
-
                     setTheme(theme);
                     localStorage.setItem("usertheme", JSON.stringify(theme));
                 })
         }
-
     }
 
     const handleCompile = () => {
         if (processing) return
-        console.log(code)
+        console.log("Compiling code...");
         setProcessing(true);
-        // if (langMap[language.value]) {
-        if (false) {
-            // console.log("if part ");
-            let lang = language.value
-            if (lang === 'python') {
-                lang = 'py'
-            }
-            // var qs = require('qs');
-            var data = {
-                code: code,
-                language: lang,
-                input: customInput,
-            };
 
-
-
-            var config = {
-                method: "post",
-                url: process.env.REACT_APP_BACKEND_URL,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                data: data,
-            };
-
-
-            axios(config)
-                .then(function (response) {
-
-
-                    setProcessing(false)
-                    var timeDiff = new DateDiff(new Date(), new Date(outputDetails?.timestamp));
-
-                    response.data.time = (timeDiff.seconds() / 1000).toFixed(3).toString();
-
-
-                    setOutputDetails(response.data)
-
-                    //language: "java"
-                    // output: "hello Abhishek\n"
-                    // success: true
-                    // timestamp: "2022-05-27T10:19:18.256Z"
-                    // version: "11.0.15"
-                    showSuccessToast(`Compiled Successfully!`)
-                })
-                .catch(function (error) {
-                    if (offlineStatus) {
-                        showErrorToast("Slow or no internet connection");
-                    }
-                    else {
-                        showErrorToast()
-                    }
-                    setProcessing(false)
-                    console.log(error);
-
-
-                });
-        }
-        else {
-
-            // console.log("else part ");
-
-            const formData = {
-                language_id: language.id,
-                source_code: btoa(code),
-                stdin: btoa(customInput),
-            };
-
-            console.log(process.env.REACT_APP_RAPID_API_HOST)
-
-            const options = {
-                method: "POST",
-                url: process.env.REACT_APP_RAPID_API_URL,
-                params: { base64_encoded: "true", fields: "*" },
-                headers: {
-                    "content-type": "application/json",
-                    "Content-Type": "application/json",
-                    "X-RapidAPI-Host": process.env.REACT_APP_RAPID_API_HOST,
-                    "X-RapidAPI-Key": process.env.REACT_APP_RAPID_API_KEY,
-                },
-                data: formData,
-            };
-
-            axios
-                .request(options)
-                .then(function (response) {
-                    // console.log("res.data", response.data);
-                    const token = response.data.token;
-                    checkStatus(token);
-                })
-                .catch((err) => {
-                    let error = err.response ? err.response.data : err;
-                    setProcessing(false);
-                    console.dir(error);
-
-                });
-
-        }
-    };
-
-    const checkStatus = async (token) => {
-        const options = {
-            method: "GET",
-            url: process.env.REACT_APP_RAPID_API_URL + "/" + token,
-            params: { base64_encoded: "true", fields: "*" },
-            headers: {
-                "X-RapidAPI-Host": process.env.REACT_APP_RAPID_API_HOST,
-                "X-RapidAPI-Key": process.env.REACT_APP_RAPID_API_KEY,
-            },
+        // OneCompiler API format with files array
+        const formData = {
+            language: language.value,
+            stdin: customInput || "",
+            files: [
+                {
+                    name: `code.${language.value}`,
+                    content: code
+                }
+            ]
         };
 
+        console.log("OneCompiler Request:", formData);
+        console.log("API URL:", process.env.REACT_APP_RAPID_API_URL);
 
-        try {
-            let response = await axios.request(options);
-            let statusId = response.data.status?.id;
+        const options = {
+            method: "POST",
+            url: process.env.REACT_APP_RAPID_API_URL,
+            headers: {
+                "Content-Type": "application/json",
+                "X-RapidAPI-Key": process.env.REACT_APP_RAPID_API_KEY,
+                "X-RapidAPI-Host": process.env.REACT_APP_RAPID_API_HOST,
+            },
+            data: formData,
+        };
 
-            // Processed - we have a result
-            if (statusId === 1 || statusId === 2) {
-                /* So, if statusId ===1 OR statusId ===2 
-                that means our code is still processing and 
-                we need to call the API again to check 
-                if we get any results or not.*/
-                setTimeout(() => {
-                    checkStatus(token)
-                }, 2000)
-                return
-            } else {
-                setProcessing(false)
-                setOutputDetails(response.data)
-                showSuccessToast(`Compiled Successfully!`)
-                // console.log('response.data', response.data)
-                return
-            }
-        } catch (err) {
-            console.log("err", err);
-            setProcessing(false);
-            showErrorToast();
-        }
+        axios
+            .request(options)
+            .then(function (response) {
+                console.log("OneCompiler Response:", response.data);
+                setProcessing(false);
+
+                // Keep the original OneCompiler response format
+                // Don't reformat it - just add timestamp
+                const outputData = {
+                    ...response.data,
+                    timestamp: new Date().toISOString(),
+                };
+
+                console.log("Setting outputDetails:", outputData);
+                setOutputDetails(outputData);
+                showSuccessToast(`Compiled Successfully!`);
+            })
+            .catch((err) => {
+                console.error("Error from OneCompiler:", err);
+                
+                let errorMsg = "Something went wrong! Please try again.";
+                
+                if (err.response) {
+                    console.error("Response Error:", err.response.data);
+                    errorMsg = err.response.data?.message || err.response.data?.error || errorMsg;
+                    
+                    if (err.response.status === 401) {
+                        errorMsg = "Invalid API Key! Please check your .env file.";
+                    } else if (err.response.status === 403) {
+                        errorMsg = "API Key not authorized. Check subscription on RapidAPI.";
+                    }
+                } else if (err.request) {
+                    console.error("No Response:", err.request);
+                    errorMsg = "No response from server. Check your internet connection.";
+                } else {
+                    console.error("Error:", err.message);
+                    errorMsg = err.message;
+                }
+                
+                setProcessing(false);
+                showErrorToast(errorMsg);
+            });
     };
 
-
     const resetCode = () => {
-
         let text = "Your code will be discarded and reset to the default code!";
         if (window.confirm(text)) {
             setCode(snippet(language.value))
         }
-
     }
-
-
-    // function launchFullscreen(element) {
-    //     // console.log('called');
-    //     if (element.requestFullscreen) {
-    //         element.requestFullscreen();
-    //     } else if (element.mozRequestFullScreen) {
-    //         element.mozRequestFullScreen();
-    //     } else if (element.webkitRequestFullscreen) {
-    //         element.webkitRequestFullscreen();
-    //     } else if (element.msRequestFullscreen) {
-    //         element.msRequestFullscreen();
-    //     }
-    // }
-
-    // function exitFullscreen() {
-    //     if (document.exitFullscreen) {
-    //         document.exitFullscreen();
-    //     } else if (document.mozCancelFullScreen) {
-    //         document.mozCancelFullScreen();
-    //     } else if (document.webkitExitFullscreen) {
-    //         document.webkitExitFullscreen();
-    //     }
-    // }
 
     const makeFullScreen = async () => {
         if (!fullScreen) {
-            // launchFullscreen(document.documentElement)
             setFullScreen(true)
         }
         else {
-            // exitFullscreen();
             setFullScreen(false)
         }
-
     }
-
 
     useEffect(() => {
         if (key_fullScreen) {
-            // console.log("f11 pressed")
             // makeFullScreen()
         }
-        //eslint-disable-next-line
     }, [key_fullScreen]);
-
-
-    // const url = window.location.pathname.split('/').pop();
-
 
     useEffect(() => {
         let th = loadTheme();
         console.log("calling define theme from useEffect")
-        // defineTheme(th.value).then((_) =>
-        //     setTheme(th)
-        // );
         handleThemeChange(th);
     }, []);
 
@@ -412,6 +252,7 @@ const CodeEditor = () => {
             progress: undefined,
         });
     };
+
     const showErrorToast = (msg) => {
         toast.error(msg || `Something went wrong! Please try again.`, {
             position: "top-right",
@@ -424,11 +265,7 @@ const CodeEditor = () => {
         });
     };
 
-
     const handleShare = async () => {
-
-
-
         try {
             await navigator.share({
                 files: [
@@ -438,7 +275,6 @@ const CodeEditor = () => {
                 text: 'code',
             },
                 {
-
                     copy: true,
                     email: true,
                     print: true,
@@ -454,75 +290,56 @@ const CodeEditor = () => {
                     language: 'pt'
                 }
             );
-
         } catch (err) {
             console.error(err);
         }
     };
 
-
-    // =======================* Split view *=====================*****==============
+    // Split view handler
     useEffect(() => {
         const resizer = document.getElementById('dragMe');
+        if (!resizer) return;
+
         const leftSide = resizer.previousElementSibling;
         const rightSide = resizer.nextElementSibling;
-
 
         let x = 0;
         let leftWidth = 0;
 
-        // Handle the mousedown event
-        // that's triggered when user drags the resizer
         const mouseDownHandler = function (e) {
-            // Get the current mouse position
-
             x = e.clientX;
             leftWidth = leftSide.getBoundingClientRect().width;
             resizer.style.cursor = 'col-resize';
             document.body.style.cursor = 'col-resize';
-
-            // Attach the listeners to `document`
             document.addEventListener('mousemove', mouseMoveHandler);
             document.addEventListener('mouseup', mouseUpHandler);
-
         };
-        // Attach the handler
+
         resizer.addEventListener('mousedown', mouseDownHandler);
 
         const mouseMoveHandler = function (e) {
-            // How far the mouse has been moved
             if (leftSide && rightSide) {
                 const dx = e.clientX - x;
-
-
                 const newLeftWidth = ((leftWidth + dx) * 100) / resizer.parentNode.getBoundingClientRect().width;
                 leftSide.style.width = `${newLeftWidth}%`;
-
                 leftSide.style.userSelect = 'none';
                 leftSide.style.pointerEvents = 'none';
-
                 rightSide.style.userSelect = 'none';
                 rightSide.style.pointerEvents = 'none';
             }
         };
 
-
         const mouseUpHandler = function () {
             resizer.style.removeProperty('cursor');
             document.body.style.removeProperty('cursor');
-
             leftSide.style.removeProperty('user-select');
             leftSide.style.removeProperty('pointer-events');
-
             rightSide.style.removeProperty('user-select');
             rightSide.style.removeProperty('pointer-events');
-
-            // Remove the handlers of `mousemove` and `mouseup`
             document.removeEventListener('mousemove', mouseMoveHandler);
             document.removeEventListener('mouseup', mouseUpHandler);
         };
     })
-
 
     const copyToClipboard = () => {
         copy(code);
@@ -562,7 +379,7 @@ const CodeEditor = () => {
                         <div className="dropdownInner">
                             <ThemeDropdown handleThemeChange={handleThemeChange} theme={theme} />
                         </div>
-                        {/* <span>fontsize :  {font_size}</span> */}
+
                         <div className="px-4 justify-end">
                             <div className="d-flex px-2 py-1 rounded-lg border focus:outline-none hover:bg-gray-700 hover:text-blue-700 focus:z-10  focus:ring-gray-500 bg-gray-800 border-gray-600 hover:text-white hover:bg-gray-700">
                                 <label htmlFor="fontsize_lable" className="form-label mr-2 text-gray-100">Font Size</label>
@@ -580,15 +397,9 @@ const CodeEditor = () => {
                             </div>
                         </div>
 
-
-
-
-
-
                         <div className="px-4  mx-auto justify-end flex items-center" style={{
                             flex: 1
                         }} >
-
 
                             <button onClick={copyToClipboard} type="button" id="copytxt" className="flex items-center py-2 px-4 mr-3  text-xs font-medium  rounded-lg border focus:outline-none hover:bg-gray-700 hover:text-blue-700 focus:z-10  focus:ring-gray-500 bg-gray-800 border-gray-600 hover:text-white hover:bg-gray-700">
                                 <FaRegCopy fontSize={18} color="white" />
@@ -597,13 +408,11 @@ const CodeEditor = () => {
                                 <FaExpand fontSize={16} color="white" />
                             </button>
 
-
                             <button
                                 disabled={processing || offlineStatus}
                                 onClick={handleCompile} type="button" className="text-white bg-indigo-600 hover:bg-indigo-800   focus:outline-none font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center focus:ring-[#2557D6]/50 mr-2">
 
                                 {
-
                                     processing ?
                                         <>
                                             <svg role="status" className="inline w-4 h-4 mr-3 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -614,10 +423,8 @@ const CodeEditor = () => {
                                         </>
                                         :
                                         "Run ( F9   ) "
-
                                 }
                             </button>
-
 
                             <button onClick={downloadTxtFile} type="button" className="text-white bg-indigo-600 hover:bg-indigo-800   focus:outline-none font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center focus:ring-[#2557D6]/50 mr-2">
                                 {"Save Code ( ctrl+s )"}
@@ -630,29 +437,10 @@ const CodeEditor = () => {
                                 Share
                             </button>
 
-                            {/* <a href={`whatsapp://send?text=${code}`} data-action="share/whatsapp/share">
-                                
-                                <FaWhatsapp color='green' size="30" />
-                                
-                            </a> */}
-
-                            {/* <RWebShare
-                                data={{
-                                    text: "Web Share - GfG",
-                                    url: "http://localhost:3000",
-                                    title: "GfG",
-                                    files: [new File([code], 'codetext.txt', { type: "text/plain", })]
-                                }}
-                                onClick={() => console.log("shared successfully!")}
-                            >
-                                <button>Share on Web</button>
-                            </RWebShare> */}
-
                         </div>
                     </div >
                 </>
             }
-
 
             < div className="editorlayout flex flex-row  space-x-4 items-start border-2 border-t-0 border-b-0 border-gray-600"
                 style={{
@@ -671,7 +459,6 @@ const CodeEditor = () => {
                     />
                 </div>
 
-
                 <div className="resizer" id="dragMe">
                     <svg stroke="currentColor" fill="#f1f5f9" strokeWidth="0" viewBox="0 0 24 24" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg"><path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 12c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg>
                     <svg stroke="currentColor" fill="#f1f5f9" strokeWidth="0" viewBox="0 0 24 24" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg"><path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 12c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg>
@@ -686,7 +473,6 @@ const CodeEditor = () => {
                             }}>
                             {
                                 fullScreen ? <FaCompress color='white' /> : <FaExpand color='white' />
-
                             }
                         </button>
                     }
@@ -708,11 +494,8 @@ const CodeEditor = () => {
                         >
                             {processing ? "Processing..." : "F9 -  Run Code"}
                         </button>}
-
-
                     </div>
                     {<OutputDetails runcode={handleCompile} savecode={downloadTxtFile} outputDetails={outputDetails}
-
                         lang={language.value}
                     />}
 
@@ -721,7 +504,6 @@ const CodeEditor = () => {
                 </div>
             </div >
         </>
-
     )
 }
 
