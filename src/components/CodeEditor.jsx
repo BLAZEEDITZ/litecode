@@ -57,7 +57,7 @@ const CodeEditor = () => {
         }
         else if (e.keyCode === 83 && e.ctrlKey) {
             e.preventDefault()
-            downloadTxtFile()
+            downloadTxtFile(code)
         }
     }
 
@@ -110,20 +110,6 @@ const CodeEditor = () => {
         element.click();
     }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => {
-        if (key_run) {
-            handleCompile();
-        }
-    }, [key_run]);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => {
-        if (ctrlPress && key_save) {
-            downloadTxtFile(code)
-        }
-    }, [ctrlPress, key_save, code]);
-    
     async function handleThemeChange(th) {
         const theme = th;
         console.log(theme);
@@ -155,6 +141,20 @@ const CodeEditor = () => {
                 }
             ]
         };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+        if (key_run) {
+            handleCompile();
+        }
+    }, [key_run]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+        if (ctrlPress && key_save) {
+            downloadTxtFile(code)
+        }
+    }, [ctrlPress, key_save, code]);
 
         console.log("OneCompiler Request:", formData);
         console.log("API URL:", process.env.REACT_APP_RAPID_API_URL);
