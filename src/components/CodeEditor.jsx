@@ -111,16 +111,16 @@ const CodeEditor = () => {
     }
 
     useEffect(() => {
-        if (key_run) {
-            handleCompile();
-        }
-    }, [key_run]);
+    if (key_run) {
+        handleCompile();
+    }
+    }, [key_run, handleCompile]);  // ✅ Added handleCompile
 
     useEffect(() => {
-        if (ctrlPress && key_save) {
-            downloadTxtFile(code)
-        }
-    }, [ctrlPress, key_save, code]);
+    if (ctrlPress && key_save) {
+        downloadTxtFile(code)
+    }
+    }, [ctrlPress, key_save, code, downloadTxtFile]);  // ✅ Added downloadTxtFile
 
     async function handleThemeChange(th) {
         const theme = th;
