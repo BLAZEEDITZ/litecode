@@ -1,5 +1,4 @@
 import React from "react";
-import { langMap } from "../constants/languageOptions";
 
 const OutputDetails = ({ outputDetails, runcode, savecode, lang }) => {
 

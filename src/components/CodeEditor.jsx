@@ -15,7 +15,6 @@ import CustomInput from './CustomInput';
 import OutputWindow from './OutputWindow';
 import OutputDetails from './OutputDetails';
 import useKeyPress from '../hooks/useKeyPress';
-import DateDiff from 'date-diff';
 import copy from 'copy-to-clipboard';
 import StopWatch from './StopWatch';
 import { Link } from 'react-router-dom';
@@ -115,7 +114,7 @@ const CodeEditor = () => {
         if (key_run) {
             handleCompile();
         }
-    }, [ctrlPress, key_run]);
+    }, [key_run]);
 
     useEffect(() => {
         if (ctrlPress && key_save) {
@@ -426,7 +425,7 @@ const CodeEditor = () => {
                                 }
                             </button>
 
-                            <button onClick={downloadTxtFile} type="button" className="text-white bg-indigo-600 hover:bg-indigo-800   focus:outline-none font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center focus:ring-[#2557D6]/50 mr-2">
+                            <button onClick={() => downloadTxtFile(code)} type="button" className="text-white bg-indigo-600 hover:bg-indigo-800   focus:outline-none font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center focus:ring-[#2557D6]/50 mr-2">
                                 {"Save Code ( ctrl+s )"}
                             </button>
 
