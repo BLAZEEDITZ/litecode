@@ -1,21 +1,17 @@
-import React from "react";
-import { classnames } from "../utils/general";
+﻿import React from "react";
 
 const CustomInput = ({ customInput, setCustomInput }) => {
     return (
-        <>
-            {" "}
+        <div className="custom-input-wrapper">
+            <label className="custom-input-label">stdin</label>
             <textarea
-                rows="5"
-
+                rows="3"
                 value={customInput}
                 onChange={(e) => setCustomInput(e.target.value)}
-                placeholder={`Custom input`}
-                className={classnames(
-                    "focus:outline-none w-full border-2 border-black z-10 rounded-md  px-4 py-2 bg-white mt-2"
-                )}
-            ></textarea>
-        </>
+                placeholder="Custom input (stdin)..."
+                className="custom-input-textarea"
+            />
+        </div>
     );
 };
 

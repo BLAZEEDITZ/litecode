@@ -70,42 +70,30 @@ const OutputDetails = ({ outputDetails, runcode, savecode, lang }) => {
     return (
         <>
             {outputDetails && (
-                <div className="flex justify-between w-full mt-4">
-                    <div className="metrics-container flex flex-col space-y-3">
-                        <p className="text-sm text-slate-300">
-                            Status:{" "}
-                            <span className={`ml-2 font-semibold px-2 py-1 rounded-md ${getStatusColor()}`}>
-                                {getStatus()}
-                            </span>
-                        </p>
-
-                        <p className="text-sm text-slate-300">
-                            Memory:{" "}
-                            <span className="ml-2 font-semibold px-2 py-1 rounded-md bg-gray-100 text-slate-900">
-                                {getMemory()}
-                            </span>
-                        </p>
-
-                        <p className="text-sm text-slate-300">
-                            Time:{" "}
-                            <span className="ml-2 font-semibold px-2 py-1 rounded-md bg-gray-100 text-slate-900">
-                                {getExecutionTime()}
-                            </span>
-                        </p>
+                <div className="output-details">
+                    <div className="metrics">
+                        <div className="metric-item">
+                            <span className="metric-label">Status</span>
+                            <span className={`metric-badge ${
+                                getStatus() === 'Success' ? 'badge-success' :
+                                getStatus() === 'No Output' ? 'badge-warning' : 'badge-error'
+                            }`}>{getStatus()}</span>
+                        </div>
+                        <div className="metric-item">
+                            <span className="metric-label">Memory</span>
+                            <span className="metric-value">{getMemory()}</span>
+                        </div>
+                        <div className="metric-item">
+                            <span className="metric-label">Time</span>
+                            <span className="metric-value">{getExecutionTime()}</span>
+                        </div>
                     </div>
-
-                    <div className="flex gap-2 items-start">
-                        <button 
-                            onClick={runcode}
-                            className="bg-indigo-600 hover:bg-indigo-800 text-white font-semibold py-2 px-4 rounded-lg text-sm"
-                        >
-                            Run Again
+                    <div className="output-actions">
+                        <button onClick={runcode} className="output-action-btn btn-run-again">
+                            ↺ Run Again
                         </button>
-                        <button 
-                            onClick={() => savecode()} 
-                            className="bg-green-600 hover:bg-green-800 text-white font-semibold py-2 px-4 rounded-lg text-sm"
-                        >
-                            Save
+                        <button onClick={() => savecode()} className="output-action-btn btn-save">
+                            ↓ Save
                         </button>
                     </div>
                 </div>

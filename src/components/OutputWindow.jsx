@@ -116,27 +116,23 @@ const OutputWindow = ({ outputDetails, offlineStatus }) => {
 
     return (
         <>
-            <h1 className="font-bold text-xl text-transparent mb-2 flex justify-between text-zinc-100">
-                Output
+            <div className="output-header">
+                <h1 className="output-title">Output</h1>
                 {
                     offlineStatus ?
-                        <>
-                            <span className='flex gap-1 items-center text-[#f43f5e]'>
-                                <span className='text-xl'>●</span>
-                                <span className='text-sm'>Internet DisConnected</span>
-                            </span>
-                        </>
+                        <span className="status-badge status-offline">
+                            <span className="status-dot">●</span>
+                            Offline
+                        </span>
                         :
-                        <>
-                            <span className='flex gap-1 items-center text-[#4ade80]'>
-                                <span className='text-xl'>●</span>
-                                <span className='text-sm'>Internet Connected</span>
-                            </span>
-                        </>
+                        <span className="status-badge status-online">
+                            <span className="status-dot">●</span>
+                            Online
+                        </span>
                 }
-            </h1>
-            <div className="w-full h-60 bg-[#1e293b] shadow-lg rounded-md text-white font-normal text-sm overflow-y-auto border border-gray-600">
-                {outputDetails ? <>{getOutput()}</> : null}
+            </div>
+            <div className="output-window">
+                {outputDetails ? <>{getOutput()}</> : <span className="output-placeholder">Run your code to see the output here...</span>}
             </div>
         </>
     );

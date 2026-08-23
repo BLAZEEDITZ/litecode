@@ -5,7 +5,7 @@ import { languageOptions } from "../constants/languageOptions";
 import { snippet } from "../constants/snippet";
 import { classnames } from "../utils/general";
 import './codeEditor.css'
-import { FaExpand, FaCompress, FaRegCopy, FaHome } from 'react-icons/fa';
+import { FaExpand, FaCompress, FaRegCopy, FaHome, FaSave, FaTrash, FaShare, FaPlay } from 'react-icons/fa';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { defineTheme } from "../lib/defineTheme"
@@ -14,10 +14,12 @@ import ThemeDropdown from './ThemeDropdown';
 import CustomInput from './CustomInput';
 import OutputWindow from './OutputWindow';
 import OutputDetails from './OutputDetails';
+import FileExplorer from './FileExplorer';
 import useKeyPress from '../hooks/useKeyPress';
 import copy from 'copy-to-clipboard';
 import StopWatch from './StopWatch';
 import { Link } from 'react-router-dom';
+import { getLanguageFromFileName } from '../constants/fileExtensionMap';
 
 //Compiler API: OneCompiler
 const defaultCode = `// Type Your code here 1`;
@@ -73,17 +75,27 @@ const CodeEditor = () => {
     })
 
     const onChange = (action, data) => {
-        switch (action) {
-            case "code": {
-                setCode(data);
-                window.localStorage.setItem(language.value, JSON.stringify(data))
-                break;
+    switch (action) {
+        case "code": {
+            setCode(data);
+            // Save to language localStorage
+            window.localStorage.setItem(language.value, JSON.stringify(data))
+            
+            // IMPORTANT: Notify FileExplorer to update the file content
+            // We'll do this by updating the files array through a callback
+            if (window.currentFileId) {
+                const event = new CustomEvent('updateFileContent', {
+                    detail: { fileId: window.currentFileId, content: data }
+                });
+                window.dispatchEvent(event);
             }
-            default: {
-                console.warn("case not handled!", action, data);
-            }
+            break;
         }
-    };
+        default: {
+            console.warn("case not handled!", action, data);
+        }
+    }
+};
 
     useEffect(() => {
         const prevCode = JSON.parse(localStorage.getItem(language.value));
@@ -347,6 +359,26 @@ const CodeEditor = () => {
         showSuccessToast('Copied')
     }
 
+    // Handle file selection from explorer
+// Handle file selection from explorer
+// Handle file selection from explorer
+const handleFileSelect = (file) => {
+    if (file && file.type === 'file') {
+        // Store current file ID globally
+        window.currentFileId = file.id;
+        // Load the file content
+        setCode(file.content || '');
+    }
+};
+
+    // Handle language change from file extension
+    const handleLanguageChange = (lang) => {
+        const langOption = languageOptions.find(l => l.value === lang);
+        if (langOption) {
+            onSelectChange(langOption);
+        }
+    };
+
     return (
         <>
             <ToastContainer
@@ -364,15 +396,17 @@ const CodeEditor = () => {
             {
                 !fullScreen &&
                 <>
-                    <div className="h-1 w-full bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 transition duration-200">
-                    </div>
-
-                    <div className="flex flex-row border-2 border-t-0 border-gray-600 gap-4" >
-                        <Link to="/" className='mt-1 ml-2'>
-                            <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center mr-5">
-                                <FaHome fontSize={18} color="black" />
+                    <div className="editor-top-bar" />
+                    
+                    <div className="editor-navbar">
+                        <Link to="/" className="home-btn-link">
+                            <button className="home-btn" title="Home">
+                                <FaHome fontSize={15} />
+                                <span className="home-btn-label">Home</span>
                             </button>
                         </Link>
+
+                        <div className="navbar-divider" />
 
                         <div className="dropdownInner">
                             <LanguagesDropdown onSelectChange={onSelectChange} Userlanguage={language} />
@@ -381,129 +415,136 @@ const CodeEditor = () => {
                             <ThemeDropdown handleThemeChange={handleThemeChange} theme={theme} />
                         </div>
 
-                        <div className="px-4 justify-end">
-                            <div className="d-flex px-2 py-1 rounded-lg border focus:outline-none hover:bg-gray-700 hover:text-blue-700 focus:z-10  focus:ring-gray-500 bg-gray-800 border-gray-600 hover:text-white hover:bg-gray-700">
-                                <label htmlFor="fontsize_lable" className="form-label mr-2 text-gray-100">Font Size</label>
-                                <input
-                                    type="number"
-                                    className="form-control px-3 py-1  text-gray-700 bg-white  border border-solid border-gray-300 rounded transition ease-in-out m-0  focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                                    id="fontsize_lable"
-                                    placeholder="Font size"
-                                    value={font_size}
-                                    onChange={(e) => set_font_size(parseInt(e.target.value))}
-                                    style={{
-                                        width: "80px"
-                                    }}
-                                />
-                            </div>
+                        <div className="navbar-divider" />
+
+                        <div className="fontsize-control">
+                            <label htmlFor="fontsize_lable" className="fontsize-label">Aa</label>
+                            <input
+                                type="number"
+                                className="fontsize-input"
+                                id="fontsize_lable"
+                                placeholder="16"
+                                value={font_size}
+                                onChange={(e) => set_font_size(parseInt(e.target.value))}
+                            />
                         </div>
 
-                        <div className="px-4  mx-auto justify-end flex items-center" style={{
-                            flex: 1
-                        }} >
+                        <div className="navbar-actions">
+                            <button onClick={copyToClipboard} type="button" className="icon-btn" title="Copy Code (Ctrl+C)">
+                                <FaRegCopy fontSize={15} />
+                            </button>
+                            
+                            <button onClick={makeFullScreen} type="button" className="icon-btn" title="Toggle Full Screen (F11)">
+                                <FaExpand fontSize={14} />
+                            </button>
 
-                            <button onClick={copyToClipboard} type="button" id="copytxt" className="flex items-center py-2 px-4 mr-3  text-xs font-medium  rounded-lg border focus:outline-none hover:bg-gray-700 hover:text-blue-700 focus:z-10  focus:ring-gray-500 bg-gray-800 border-gray-600 hover:text-white hover:bg-gray-700">
-                                <FaRegCopy fontSize={18} color="white" />
+                            <div className="navbar-divider" />
+
+                            <button onClick={() => downloadTxtFile(code)} type="button" className="icon-btn" title="Save Code (Ctrl+S)">
+                                <FaSave fontSize={14} />
                             </button>
-                            <button onClick={makeFullScreen} type="button" className="flex items-center py-2 px-4 mr-3 text-xs font-medium  rounded-lg border focus:outline-none hover:bg-gray-700 hover:text-blue-700 focus:z-10  focus:ring-gray-500 bg-gray-800 border-gray-600 hover:text-white hover:bg-gray-700">
-                                <FaExpand fontSize={16} color="white" />
+
+                            <button onClick={resetCode} type="button" className="icon-btn icon-btn-danger" title="Reset Code (Ctrl+E)">
+                                <FaTrash fontSize={13} />
                             </button>
+                            
+                            <button onClick={handleShare} type="button" className="icon-btn" title="Share Code">
+                                <FaShare fontSize={14} />
+                            </button>
+
+                            <div className="navbar-divider" />
 
                             <button
                                 disabled={processing || offlineStatus}
-                                onClick={handleCompile} type="button" className="text-white bg-indigo-600 hover:bg-indigo-800   focus:outline-none font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center focus:ring-[#2557D6]/50 mr-2">
-
-                                {
-                                    processing ?
-                                        <>
-                                            <svg role="status" className="inline w-4 h-4 mr-3 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB" />
-                                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor" />
-                                            </svg>
-                                            running...
-                                        </>
-                                        :
-                                        "Run ( F9   ) "
-                                }
+                                onClick={handleCompile} 
+                                type="button" 
+                                className="run-btn"
+                                title="Run Code (F9)"
+                            >
+                                {processing ? (
+                                    <svg role="status" className="inline w-4 h-4 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.590820 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 28.5686 23.4432 10.3988 42.448 10.3988C61.4528 10.3988 75.9172 28.5686 75.9172 50.5908C75.9172 72.6121 61.4528 90.7818 42.448 90.7818C23.4432 90.7818 9.08144 72.6121 9.08144 50.5908Z" fill="#E5E7EB"/>
+                                        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.0669 3.6496 62.3342 1.42799 55.1432 1.42799C42.8181 1.42799 30.7784 5.40659 21.4267 12.7395C11.7919 20.2396 5.47541 30.7742 2.5817 42.8554C0.104477 52.7586 -0.753073 63.0728 0.69841 72.5686C1.9284 81.0953 5.22489 89.12 10.1302 96.1670C14.9079 102.999 21.7410 108.629 29.5604 112.584C37.2368 116.465 45.7731 118.519 54.4882 118.519C63.3297 118.519 71.8760 116.465 79.5524 112.584C87.3718 108.629 94.2049 102.999 99.0826 96.1670" stroke="currentColor" strokeWidth="5"/>
+                                    </svg>
+                                ) : (
+                                    <><FaPlay fontSize={13} /><span className="run-btn-label">Run</span></>
+                                )}
                             </button>
-
-                            <button onClick={() => downloadTxtFile(code)} type="button" className="text-white bg-indigo-600 hover:bg-indigo-800   focus:outline-none font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center focus:ring-[#2557D6]/50 mr-2">
-                                {"Save Code ( ctrl+s )"}
-                            </button>
-
-                            <button onClick={resetCode} type="button" className="text-white bg-indigo-600 hover:bg-indigo-800   focus:outline-none font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center focus:ring-[#2557D6]/50 mr-2">
-                                {"Erase Code ( ctrl+e )"}
-                            </button>
-                            <button onClick={handleShare} type="button" className="text-white bg-[#db2777] hover:bg-[#ec4899]   focus:outline-none font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center focus:ring-[#2557D6]/50 mr-2">
-                                Share
-                            </button>
-
                         </div>
-                    </div >
+                    </div>
                 </>
             }
 
-            < div className="editorlayout flex flex-row  space-x-4 items-start border-2 border-t-0 border-b-0 border-gray-600"
-                style={{
-                    height: fullScreen ? "99vh" : `calc(100vh - 6.4vh )`,
-                }}>
-                <div className="flex flex-col h-full justify-start items-end container__left">
-                    <CodeEditorWindow
-                        code={code}
-                        Fontoptions={{
-                            fontSize: font_size
-                        }}
-                        onChange={onChange}
-                        language={language?.value}
-                        theme={theme.value}
-                        isFullScreen={fullScreen}
-                    />
-                </div>
+            <div className="editorlayout-with-explorer flex" style={{height: fullScreen ? "99vh" : `calc(100vh - 6.4vh )`}}>
+                {/* FILE EXPLORER */}
+                <FileExplorer 
+                    onFileSelect={handleFileSelect}
+                    onLanguageChange={handleLanguageChange}
+                    currentLanguage={language}
+                />
 
-                <div className="resizer" id="dragMe">
-                    <svg stroke="currentColor" fill="#f1f5f9" strokeWidth="0" viewBox="0 0 24 24" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg"><path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 12c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg>
-                    <svg stroke="currentColor" fill="#f1f5f9" strokeWidth="0" viewBox="0 0 24 24" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg"><path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 12c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg>
-                </div>
-
-                <div className="flex  flex-col container__right relative h-full px-1 pt-1"
-                    style={{ flex: "1 1 0%" }}>
-                    {
-                        fullScreen && <button onClick={makeFullScreen} type="button" className="flex items-center py-2 px-4 mr-3 text-xs font-medium  rounded-lg border focus:outline-none hover:bg-gray-700 hover:text-blue-700 focus:z-10  focus:ring-gray-500 bg-gray-800 border-gray-600 hover:text-white hover:bg-gray-700 mt-2"
-                            style={{
-                                width: "fit-content"
-                            }}>
-                            {
-                                fullScreen ? <FaCompress color='white' /> : <FaExpand color='white' />
-                            }
-                        </button>
-                    }
-
-                    <OutputWindow lang={language.value} outputDetails={outputDetails} offlineStatus={offlineStatus} />
-                    <div className="flex flex-col items-end">
-                        <CustomInput
-                            customInput={customInput}
-                            setCustomInput={setCustomInput}
+                {/* EDITOR SECTION */}
+                <div className="editorlayout flex flex-row space-x-4 items-start border-2 border-t-0 border-b-0 border-gray-600"
+                    style={{
+                        flex: 1,
+                        height: '100%'
+                    }}>
+                    <div className="flex flex-col h-full justify-start items-end container__left">
+                        <CodeEditorWindow
+                            code={code}
+                            Fontoptions={{
+                                fontSize: font_size
+                            }}
+                            onChange={onChange}
+                            language={language?.value}
+                            theme={theme.value}
+                            isFullScreen={fullScreen}
                         />
-
-                        {fullScreen && <button
-                            onClick={handleCompile}
-                            disabled={!code || processing}
-                            className={classnames(
-                                "mt-4 border-2 border-black z-10 rounded-md shadow-[5px_5px_0px_0px_rgba(0,0,0)] px-4 py-2 hover:shadow transition duration-200 bg-white flex-shrink-0 font-bold",
-                                (!code || processing) ? "opacity-50" : ""
-                            )}
-                        >
-                            {processing ? "Processing..." : "F9 -  Run Code"}
-                        </button>}
                     </div>
-                    {<OutputDetails runcode={handleCompile} savecode={downloadTxtFile} outputDetails={outputDetails}
-                        lang={language.value}
-                    />}
 
-                    <StopWatch />
+                    <div className="resizer" id="dragMe">
+                        <div className="resizer-dots"></div>
+                    </div>
 
+                    <div className="flex flex-col container__right relative h-full px-1 pt-1"
+                        style={{ flex: "1 1 0%" }}>
+                        {fullScreen && (
+                            <button 
+                                onClick={makeFullScreen} 
+                                type="button" 
+                                className="icon-btn-fullscreen" 
+                                title="Exit Full Screen"
+                            >
+                                {fullScreen ? <FaCompress color='white' /> : <FaExpand color='white' />}
+                            </button>
+                        )}
+
+                        <OutputWindow lang={language.value} outputDetails={outputDetails} offlineStatus={offlineStatus} />
+                        <div className="flex flex-col items-end">
+                            <CustomInput
+                                customInput={customInput}
+                                setCustomInput={setCustomInput}
+                            />
+
+                            {fullScreen && <button
+                                onClick={handleCompile}
+                                disabled={!code || processing}
+                                className={classnames(
+                                    "mt-4 border-2 border-black z-10 rounded-md shadow-[5px_5px_0px_0px_rgba(0,0,0)] px-4 py-2 hover:shadow transition duration-200 bg-white flex-shrink-0 font-bold",
+                                    (!code || processing) ? "opacity-50" : ""
+                                )}
+                            >
+                                {processing ? "Processing..." : "F9 -  Run Code"}
+                            </button>}
+                        </div>
+                        {<OutputDetails runcode={handleCompile} savecode={downloadTxtFile} outputDetails={outputDetails}
+                            lang={language.value}
+                        />}
+
+                        <StopWatch />
+                    </div>
                 </div>
-            </div >
+            </div>
         </>
     )
 }
