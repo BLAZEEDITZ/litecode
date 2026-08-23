@@ -110,17 +110,20 @@ const CodeEditor = () => {
         element.click();
     }
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
-    if (key_run) {
-        handleCompile();
-    }
+        if (key_run) {
+            handleCompile();
+        }
     }, [key_run]);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
-    if (ctrlPress && key_save) {
-        downloadTxtFile(code)
-    }
+        if (ctrlPress && key_save) {
+            downloadTxtFile(code)
+        }
     }, [ctrlPress, key_save, code]);
+    
     async function handleThemeChange(th) {
         const theme = th;
         console.log(theme);
