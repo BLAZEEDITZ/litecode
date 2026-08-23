@@ -1,6 +1,6 @@
                   
  
-<h1 align="center" style="font-weight: bold;">CoderTab 💻</h1>
+<h1 align="center" style="font-weight: bold;">LiteCode 💻</h1>
 
 <p align="center">
 <a href="#tech">Technologies</a>
@@ -12,11 +12,6 @@
 
 <p align="center">A full-fledged code editor From Writing code to running against test cases and tons of custom themes and sharing code text files.
 
-</p>
-
-
-<p align="center">
-<a href="https://codertab.netlify.app/">📱 Visit this Project</a>
 </p>
  
 <h2 id="technologies">💻 Technologies</h2>
@@ -52,7 +47,7 @@ Here you list all prerequisites necessary for running your project. For example:
 How to clone your project
 
 ```bash
-git clone https://github.com/abhi9720/CoderTab.git
+git clone https://github.com/blazeeditz/litecode.git
 ```
  
 <h3>Starting</h3>
@@ -68,7 +63,7 @@ npm install
 
 Here you will explain how other developers can contribute to your project. For example, explaining how can create their branches, which patterns to follow and how to open an pull request
 
-1. `git clone https://github.com/abhi9720/CoderTab.git`
+1. `git clone https://github.com/blazeeditz/litecode.git`
 2. `git checkout -b feature/NAME`
 3. Follow commit patterns
 4. Open a Pull Request explaining the problem solved or feature made, if exists, append screenshot of visual modifications and wait for the review!
