@@ -28,13 +28,6 @@ const OutputDetails = ({ outputDetails, runcode, savecode, lang }) => {
         return "No Status";
     }
 
-    function getStatusColor() {
-        const status = getStatus();
-        if (status === "Success") return "bg-green-100 text-green-900";
-        if (status === "No Output") return "bg-yellow-100 text-yellow-900";
-        return "bg-red-100 text-red-900";
-    }
-
     function getMemory() {
         if (!outputDetails) return "-";
         

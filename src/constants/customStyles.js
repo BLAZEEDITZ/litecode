@@ -1,4 +1,4 @@
-﻿export const customStyles = {
+export const customStyles = {
     control: (styles, { isFocused }) => ({
         ...styles,
         width: '100%',

@@ -19,7 +19,6 @@ import useKeyPress from '../hooks/useKeyPress';
 import copy from 'copy-to-clipboard';
 import StopWatch from './StopWatch';
 import { Link } from 'react-router-dom';
-import { getLanguageFromFileName } from '../constants/fileExtensionMap';
 
 //Compiler API: OneCompiler
 const defaultCode = `// Type Your code here 1`;
