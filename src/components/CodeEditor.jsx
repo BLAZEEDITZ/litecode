@@ -114,14 +114,13 @@ const CodeEditor = () => {
     if (key_run) {
         handleCompile();
     }
-    }, [key_run, handleCompile]);  // ✅ Added handleCompile
+    }, [key_run]);
 
     useEffect(() => {
     if (ctrlPress && key_save) {
         downloadTxtFile(code)
     }
-    }, [ctrlPress, key_save, code, downloadTxtFile]);  // ✅ Added downloadTxtFile
-
+    }, [ctrlPress, key_save, code]);
     async function handleThemeChange(th) {
         const theme = th;
         console.log(theme);
