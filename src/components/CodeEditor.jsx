@@ -205,14 +205,14 @@ const CodeEditor = () => {
         if (key_run) {
             handleCompile();
         }
-    }, [key_run]);
+    });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         if (ctrlPress && key_save) {
             downloadTxtFile(code)
         }
-    }, [ctrlPress, key_save, code]);
+    });
 
     const resetCode = () => {
         let text = "Your code will be discarded and reset to the default code!";
