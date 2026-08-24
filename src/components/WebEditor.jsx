@@ -35,8 +35,23 @@ const WebEditor = () => {
     const [font_size, set_font_size] = useState(16)
     const [language, setLanguage] = useState(defaultWebFiles[0].language);
     
-    // States for the web output
-    const [webContent, setWebContent] = useState({ html: '', css: '', js: '' });
+    // States for the web output — initialize with defaults so it renders on load
+    const [webContent, setWebContent] = useState(() => {
+        let h = '', c = '', j = '';
+        defaultWebFiles.forEach(f => {
+            if (f.name.endsWith('.html')) h += (f.content || '') + '\n';
+            else if (f.name.endsWith('.css')) c += (f.content || '') + '\n';
+            else if (f.name.endsWith('.js')) j += (f.content || '') + '\n';
+        });
+        return { html: h, css: c, js: j };
+    });
+
+    // Save defaults to localStorage immediately if nothing exists
+    useEffect(() => {
+        if (!localStorage.getItem('litecode_web_files')) {
+            localStorage.setItem('litecode_web_files', JSON.stringify(defaultWebFiles));
+        }
+    }, []);
 
     function ctrlplusr(e) {
         if (e.keyCode === 69 && e.ctrlKey) {
@@ -118,12 +133,6 @@ const WebEditor = () => {
         setWebContent({ html: htmlContent, css: cssContent, js: jsContent });
         showSuccessToast('Rendered successfully!');
     };
-
-    // Auto-run on mount
-    useEffect(() => {
-        executeCode();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     useEffect(() => {
         if (key_run) {
