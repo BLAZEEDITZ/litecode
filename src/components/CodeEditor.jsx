@@ -11,7 +11,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { defineTheme } from "../lib/defineTheme"
 import LanguagesDropdown from './LanguageDropdown';
 import ThemeDropdown from './ThemeDropdown';
-import CustomInput from './CustomInput';
 import OutputWindow from './OutputWindow';
 import OutputDetails from './OutputDetails';
 import FileExplorer from './FileExplorer';
@@ -518,13 +517,14 @@ const handleFileSelect = (file) => {
                             </button>
                         )}
 
-                        <OutputWindow lang={language.value} outputDetails={outputDetails} offlineStatus={offlineStatus} />
+                        <OutputWindow 
+                            lang={language.value} 
+                            outputDetails={outputDetails} 
+                            offlineStatus={offlineStatus}
+                            customInput={customInput}
+                            setCustomInput={setCustomInput}
+                        />
                         <div className="flex flex-col items-end">
-                            <CustomInput
-                                customInput={customInput}
-                                setCustomInput={setCustomInput}
-                            />
-
                             {fullScreen && <button
                                 onClick={handleCompile}
                                 disabled={!code || processing}

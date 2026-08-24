@@ -9,6 +9,7 @@ const FileExplorer = ({
     currentLanguage 
 }) => {
     const [isOpen, setIsOpen] = useState(true);
+    const [activeFileId, setActiveFileId] = useState(null);
     const [files, setFiles] = useState(() => {
         const saved = localStorage.getItem('litecode_files');
         return saved ? JSON.parse(saved) : [];
@@ -167,6 +168,7 @@ const updateFileContent = useCallback((fileId, newContent) => {
         setParentForNewItem(null);
         
         // Auto-select the new file
+        setActiveFileId(newFile.id);
         onFileSelect(newFile);
         onLanguageChange(lang);
     }, [newFileName, parentForNewItem, addItemRecursive, onFileSelect, onLanguageChange]);
@@ -246,9 +248,10 @@ const updateFileContent = useCallback((fileId, newContent) => {
         return items?.map(item => (
             <div key={item.id} className="file-tree-item">
                 <div 
-                    className={`file-item-row level-${level}`}
+                    className={`file-item-row level-${level} ${item.type === 'file' && item.id === activeFileId ? 'active' : ''}`}
                     onClick={() => {
                         if (item.type === 'file') {
+                            setActiveFileId(item.id);
                             onFileSelect(item);
                             onLanguageChange(item.language);
                         } else {
@@ -352,7 +355,7 @@ const updateFileContent = useCallback((fileId, newContent) => {
                 )}
             </div>
         ));
-    }, [expandedFolders, renamingId, renameValue, confirmRename, startRename, deleteItem, toggleFolder, getFileIcon, onFileSelect, onLanguageChange]);
+    }, [expandedFolders, renamingId, renameValue, confirmRename, startRename, deleteItem, toggleFolder, getFileIcon, onFileSelect, onLanguageChange, activeFileId]);
 
     return (
     <div className={`file-explorer-container ${isOpen ? 'open' : 'closed'}`}>
