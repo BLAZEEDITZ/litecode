@@ -1,24 +1,42 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FaPlay, FaTimes } from 'react-icons/fa';
 import './inputModal.css';
 
 const InputModal = ({ isOpen, onClose, onSubmit, customInput, setCustomInput }) => {
     const inputRef = useRef(null);
+    const [isClosing, setIsClosing] = useState(false);
 
     useEffect(() => {
         if (isOpen && inputRef.current) {
+            setIsClosing(false);
             inputRef.current.focus();
         }
     }, [isOpen]);
 
-    if (!isOpen) return null;
+    const handleClose = () => {
+        setIsClosing(true);
+        setTimeout(() => {
+            onClose();
+            setIsClosing(false);
+        }, 250); // Matches the closing animation duration
+    };
+
+    const handleSubmit = () => {
+        setIsClosing(true);
+        setTimeout(() => {
+            onSubmit();
+            setIsClosing(false);
+        }, 250);
+    };
+
+    if (!isOpen && !isClosing) return null;
 
     return (
-        <div className="input-modal-overlay">
-            <div className="input-modal-container">
+        <div className={`input-modal-overlay ${isClosing ? 'closing' : ''}`}>
+            <div className={`input-modal-container ${isClosing ? 'closing' : ''}`}>
                 <div className="input-modal-header">
                     <h3>Program Requires Input</h3>
-                    <button onClick={onClose} className="input-modal-close">
+                    <button onClick={handleClose} className="input-modal-close">
                         <FaTimes />
                     </button>
                 </div>
@@ -37,10 +55,10 @@ const InputModal = ({ isOpen, onClose, onSubmit, customInput, setCustomInput }) 
                     />
                 </div>
                 <div className="input-modal-footer">
-                    <button onClick={onClose} className="input-modal-btn cancel-btn">
+                    <button onClick={handleClose} className="input-modal-btn cancel-btn">
                         Cancel
                     </button>
-                    <button onClick={onSubmit} className="input-modal-btn run-btn">
+                    <button onClick={handleSubmit} className="input-modal-btn run-btn">
                         <FaPlay fontSize={12} /> Run Code
                     </button>
                 </div>

@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react'
 import { langMap } from "../constants/languageOptions";
+import { FaTerminal } from 'react-icons/fa';
 
 const OutputWindow = ({ outputDetails, offlineStatus }) => {
     const outputRef = useRef(null);
@@ -112,7 +113,7 @@ const OutputWindow = ({ outputDetails, offlineStatus }) => {
             <div className="terminal-header">
                 <div className="terminal-tabs">
                     <button className="terminal-tab active">
-                        <span className="terminal-tab-icon">?</span>
+                        <span className="terminal-tab-icon"><FaTerminal /></span>
                         Terminal
                         {outputDetails && (
                             <span className={`terminal-tab-dot ${
@@ -124,12 +125,12 @@ const OutputWindow = ({ outputDetails, offlineStatus }) => {
                 <div className="terminal-status">
                     {offlineStatus ? (
                         <span className="status-badge status-offline">
-                            <span className="status-dot">?</span>
+                            <span className="status-dot">&bull;</span>
                             Offline
                         </span>
                     ) : (
                         <span className="status-badge status-online">
-                            <span className="status-dot">?</span>
+                            <span className="status-dot">&bull;</span>
                             Online
                         </span>
                     )}
