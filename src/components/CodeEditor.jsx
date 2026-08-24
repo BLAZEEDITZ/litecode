@@ -14,6 +14,7 @@ import ThemeDropdown from './ThemeDropdown';
 import OutputWindow from './OutputWindow';
 import OutputDetails from './OutputDetails';
 import FileExplorer from './FileExplorer';
+import InputModal from './InputModal';
 import useKeyPress from '../hooks/useKeyPress';
 import copy from 'copy-to-clipboard';
 import StopWatch from './StopWatch';
@@ -36,6 +37,7 @@ const CodeEditor = () => {
     const [code, setCode] = useState(defaultCode);
     const [theme, setTheme] = useState("");
     const [customInput, setCustomInput] = useState("");
+    const [showInputModal, setShowInputModal] = useState(false);
     const [outputDetails, setOutputDetails] = useState(null);
     const [processing, setProcessing] = useState(null);
     const [fullScreen, setFullScreen] = useState(false);
@@ -135,8 +137,24 @@ const CodeEditor = () => {
         }
     }
 
+    const requiresInputRegex = /input\(|raw_input\(|sys\.stdin|Scanner|BufferedReader|cin|scanf|getline|Console\.ReadLine|gets|fgets|readline/i;
+
     const handleCompile = () => {
-        if (processing) return
+        if (processing) return;
+        
+        if (requiresInputRegex.test(code)) {
+            setShowInputModal(true);
+        } else {
+            executeCode();
+        }
+    };
+
+    const handleModalSubmit = () => {
+        setShowInputModal(false);
+        executeCode();
+    };
+
+    const executeCode = () => {
         console.log("Compiling code...");
         setProcessing(true);
 
@@ -389,6 +407,14 @@ const handleFileSelect = (file) => {
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover
+            />
+
+            <InputModal 
+                isOpen={showInputModal} 
+                onClose={() => setShowInputModal(false)}
+                onSubmit={handleModalSubmit}
+                customInput={customInput}
+                setCustomInput={setCustomInput}
             />
 
             {
