@@ -6,13 +6,15 @@ import './explorer.css';
 const FileExplorer = ({ 
     onFileSelect, 
     onLanguageChange, 
-    currentLanguage 
+    currentLanguage,
+    storageKey = 'litecode_files',
+    defaultFiles = []
 }) => {
     const [isOpen, setIsOpen] = useState(true);
     const [activeFileId, setActiveFileId] = useState(null);
     const [files, setFiles] = useState(() => {
-        const saved = localStorage.getItem('litecode_files');
-        return saved ? JSON.parse(saved) : [];
+        const saved = localStorage.getItem(storageKey);
+        return saved ? JSON.parse(saved) : defaultFiles;
     });
     
     const [expandedFolders, setExpandedFolders] = useState(new Set());
@@ -28,11 +30,11 @@ const FileExplorer = ({
     useEffect(() => {
         const timer = setTimeout(() => {
             if (files.length > 0) {
-                localStorage.setItem('litecode_files', JSON.stringify(files));
+                localStorage.setItem(storageKey, JSON.stringify(files));
             }
         }, 1000); // Save after 1 second of inactivity
         return () => clearTimeout(timer);
-    }, [files]);
+    }, [files, storageKey]);
 
     // Generate unique ID
     const generateId = () => `file_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;

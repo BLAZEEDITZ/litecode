@@ -14,12 +14,11 @@ function Home() {
             <div className="herobanner">
                 <h1 className="font-extrabold text-transparent text-8xl bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">LiteCode</h1>
                 <div className="flex flex-wrap justify-center gap-8 ">
-                    <Card title="Code Editor" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus
-                                sodales ex justo, vel congue nisl feugiat id." image="https://user-images.githubusercontent.com/68281476/221411823-1e5222a1-dc0b-4f14-af09-eebb20c531c9.png" link="./codeeditor" />
+                    <Card title="Code Editor" description="A powerful compiler supporting 40+ programming languages. Perfect for algorithmic problem solving and learning." image="https://user-images.githubusercontent.com/68281476/221411823-1e5222a1-dc0b-4f14-af09-eebb20c531c9.png" link="./codeeditor" />
 
-                    <Card title="Json Editor" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus
-                                sodales ex justo, vel congue nisl feugiat id." image="https://user-images.githubusercontent.com/68281476/221411720-2b5bb125-e066-4cd9-9655-98d7a813f965.jpeg" link="./jsoneditor" />
+                    <Card title="Web Editor" description="Build websites instantly with our live HTML, CSS, and JS preview environment. A perfect CodePen alternative." image="https://images.unsplash.com/photo-1627398240411-8bbeb1660d24?auto=format&fit=crop&w=400&q=80" link="./webeditor" />
 
+                    <Card title="Json Editor" description="Format, validate, and convert JSON data to CSV, XML, and YAML seamlessly." image="https://user-images.githubusercontent.com/68281476/221411720-2b5bb125-e066-4cd9-9655-98d7a813f965.jpeg" link="./jsoneditor" />
                 </div>
 
             </div>
@@ -33,13 +32,22 @@ function Home() {
                         <p className="font-normal text-gray-700 dark:text-gray-400 text-lg">
                             <strong>Code Editor</strong> is a web app that allows users to write and run code in multiple programming languages with custom input. With its user-friendly interface, <strong> multiple themes, and font sizes </strong>, along with convenient shortcuts for code execution, Code Editor is a valuable tool for programmers of all levels. The app also includes an <strong> internet status</strong> indicator to ensure users are always connected.
                         </p>
-
-
                     </article>
                     <div className="screenshot">
                         <img src={codeditorimg} alt="CodePad 1" className="w-1/2 mb-4" />
                     </div>
+                </div>
 
+                <div className="editor1display flex-row-reverse" style={{flexDirection: 'row-reverse'}}>
+                    <article className="description">
+                        <h1 className="text-4xl font-bold mb-8">Web Editor: Build UIs with Instant Feedback</h1>
+                        <p className="font-normal text-gray-700 dark:text-gray-400 text-lg">
+                            <strong>Web Editor</strong> is a dedicated workspace for front-end development. Seamlessly switch between HTML, CSS, and JavaScript files in the explorer and watch your creations come to life instantly in the <strong>Live Output window</strong>. A perfect environment for prototyping and learning web development.
+                        </p>
+                    </article>
+                    <div className="screenshot">
+                        <img src="https://images.unsplash.com/photo-1627398240411-8bbeb1660d24?auto=format&fit=crop&w=800&q=80" alt="Web Editor" className="w-1/2 mb-4" style={{borderRadius: '8px'}} />
+                    </div>
                 </div>
 
                 <div className="editor2display">

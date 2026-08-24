@@ -1,5 +1,6 @@
 import React from 'react'
 import CodeEditor from "./components/CodeEditor.jsx";
+import WebEditor from "./components/WebEditor.jsx";
 import JsonEditor from './FormatterComponent/JsonEditor.jsx';
 import { ToastContainer } from "react-toastify";
 import Home from './Home.jsx';
@@ -25,6 +26,7 @@ const App = () => {
         <Routes>
           <Route exact path="/" element={<Home />} />
           <Route exact path="/codeeditor" element={<CodeEditor />} />
+          <Route exact path="/webeditor" element={<WebEditor />} />
           <Route exact path="/jsoneditor" element={<JsonEditor />} />
         </Routes>
       </Router>
