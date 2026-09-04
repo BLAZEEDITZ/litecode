@@ -438,7 +438,15 @@ const handleFileSelect = (file) => {
                             <LanguagesDropdown 
                                 onSelectChange={onSelectChange} 
                                 Userlanguage={language} 
-                                onComingSoonClick={() => setShowChatBall(true)}
+                                onComingSoonClick={() => {
+                                    const keys = ['A1B2C', '9X8Y7', 'K9L0M', 'Q1W2E', 'Z9X8C', 'P0O9I', 'M1N2B', 'V9C8X', 'L0K9J', 'H1G2F'];
+                                    const inputKey = prompt("Please enter a secret key to access LiteCode AI Beta:");
+                                    if (keys.includes(inputKey)) {
+                                        setShowChatBall(true);
+                                    } else if (inputKey !== null) {
+                                        toast.error("Invalid Secret Key!");
+                                    }
+                                }}
                             />
                         </div>
                         <div className="dropdownInner">
