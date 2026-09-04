@@ -393,6 +393,11 @@
 .chatbot-resize-handle:hover {
     color: rgba(99, 102, 241, 0.8);
 }
+
+/* ============================================
+   CODE BLOCK COPY BUTTON
+   ============================================ */
+
 .chat-code-wrapper {
     position: relative;
     margin: 0.4rem 0;
@@ -400,49 +405,34 @@
 
 .chat-copy-btn {
     position: absolute;
-    top: 4px;
-    right: 4px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #c9d1d9;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 0.65rem;
+    top: 6px;
+    right: 6px;
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    color: #a5b4fc;
+    padding: 3px 10px;
+    border-radius: 5px;
+    font-size: 0.68rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
+    z-index: 10;
+    letter-spacing: 0.02em;
 }
 
 .chat-copy-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(99, 102, 241, 0.3);
+    border-color: rgba(99, 102, 241, 0.5);
     color: #fff;
-}
-/* COPY BUTTON FIX */
-.chat-code-wrapper {
-    position: relative;
-    margin: 0.4rem 0;
+    box-shadow: 0 0 8px rgba(99, 102, 241, 0.25);
 }
 
-.chat-copy-btn {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    background: rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    color: #c9d1d9 !important;
-    padding: 2px 6px !important;
-    border-radius: 4px !important;
-    font-size: 0.65rem !important;
-    cursor: pointer !important;
-    transition: all 0.2s ease !important;
-    z-index: 10 !important;
-}
-
-.chat-copy-btn:hover {
-    background: rgba(255, 255, 255, 0.2) !important;
-    color: #fff !important;
+.chat-copy-btn.copied {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.5);
+    color: #34d399;
 }
 
 .chat-code-block {
-    position: relative;
-    padding-top: 1.5rem !important; /* Make room for the button */
+    padding-top: 1.8rem !important;
 }

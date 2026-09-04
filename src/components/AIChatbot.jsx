@@ -27,6 +27,7 @@ const AIChatbot = ({ visible, onDismiss }) => {
 
     const chatEndRef = useRef(null);
     const inputRef = useRef(null);
+    const messagesRef = useRef(null);
     const resizingRef = useRef(false);
     const dragStartRef = useRef({ x: 0, y: 0, startX: 0, startY: 0 });
 
@@ -171,32 +172,55 @@ const AIChatbot = ({ visible, onDismiss }) => {
         document.addEventListener('mouseup', onUp);
     };
 
-    // Add global copy function for the generated HTML
-    useEffect(() => {
-        window.copyAICode = (btn) => {
-            const codeBlock = btn.nextElementSibling;
-            if (codeBlock) {
-                navigator.clipboard.writeText(codeBlock.innerText);
-                const originalText = btn.innerHTML;
-                btn.innerHTML = 'Copied!';
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                }, 2000);
-            }
-        };
-        return () => {
-            delete window.copyAICode;
-        };
+    // Fallback copy for non-HTTPS contexts
+    const copyToClipboard = useCallback((text) => {
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text);
+        } else {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        }
     }, []);
+
+    // Event delegation for copy buttons (inline onclick doesn't work in dangerouslySetInnerHTML)
+    useEffect(() => {
+        const container = messagesRef.current;
+        if (!container) return;
+
+        const handleClick = (e) => {
+            const btn = e.target.closest('.chat-copy-btn');
+            if (!btn) return;
+
+            const wrapper = btn.closest('.chat-code-wrapper');
+            if (!wrapper) return;
+
+            const codeEl = wrapper.querySelector('pre code');
+            if (!codeEl) return;
+
+            copyToClipboard(codeEl.innerText);
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+                btn.textContent = 'Copy Code';
+                btn.classList.remove('copied');
+            }, 2000);
+        };
+
+        container.addEventListener('click', handleClick);
+        return () => container.removeEventListener('click', handleClick);
+    }, [chatOpen, copyToClipboard]);
 
     // Format AI messages with basic markdown
     const formatMessage = (text) => {
-        // Code blocks with copy button
+        // Code blocks with copy button (no onclick needed - handled by event delegation)
         let formatted = text.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) => {
-            return `<div class="chat-code-wrapper">
-                        <button class="chat-copy-btn" onclick="window.copyAICode(this)">Copy Code</button>
-                        <pre class="chat-code-block"><code>${code.trim()}</code></pre>
-                    </div>`;
+            return '<div class="chat-code-wrapper"><button class="chat-copy-btn">Copy Code</button><pre class="chat-code-block"><code>' + code.trim() + '</code></pre></div>';
         });
         // Inline code
         formatted = formatted.replace(/`([^`]+)`/g, '<code class="chat-inline-code">$1</code>');
@@ -255,7 +279,7 @@ const AIChatbot = ({ visible, onDismiss }) => {
                     </div>
 
                     {/* Messages */}
-                    <div className="chatbot-messages">
+                    <div className="chatbot-messages" ref={messagesRef}>
                         {messages.map((msg, i) => (
                             <div key={i} className={`chatbot-msg ${msg.role}`}>
                                 <div className="chatbot-msg-avatar">
