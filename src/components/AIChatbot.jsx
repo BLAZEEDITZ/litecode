@@ -3,7 +3,7 @@ import { FaTimes, FaPaperPlane, FaRobot, FaUser, FaGripLines } from 'react-icons
 import './aiChatbot.css';
 
 const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${GEMINI_API_KEY}`;
 
 const SYSTEM_PROMPT = `You are LiteCode AI, a helpful coding assistant built into the LiteCode online IDE. You help users with:
 - Writing, debugging, and explaining code in 40+ languages
@@ -171,11 +171,32 @@ const AIChatbot = ({ visible, onDismiss }) => {
         document.addEventListener('mouseup', onUp);
     };
 
+    // Add global copy function for the generated HTML
+    useEffect(() => {
+        window.copyAICode = (btn) => {
+            const codeBlock = btn.nextElementSibling;
+            if (codeBlock) {
+                navigator.clipboard.writeText(codeBlock.innerText);
+                const originalText = btn.innerHTML;
+                btn.innerHTML = 'Copied!';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                }, 2000);
+            }
+        };
+        return () => {
+            delete window.copyAICode;
+        };
+    }, []);
+
     // Format AI messages with basic markdown
     const formatMessage = (text) => {
-        // Code blocks
+        // Code blocks with copy button
         let formatted = text.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) => {
-            return `<pre class="chat-code-block"><code>${code.trim()}</code></pre>`;
+            return `<div class="chat-code-wrapper">
+                        <button class="chat-copy-btn" onclick="window.copyAICode(this)">Copy Code</button>
+                        <pre class="chat-code-block"><code>${code.trim()}</code></pre>
+                    </div>`;
         });
         // Inline code
         formatted = formatted.replace(/`([^`]+)`/g, '<code class="chat-inline-code">$1</code>');

@@ -393,3 +393,26 @@
 .chatbot-resize-handle:hover {
     color: rgba(99, 102, 241, 0.8);
 }
+.chat-code-wrapper {
+    position: relative;
+    margin: 0.4rem 0;
+}
+
+.chat-copy-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #c9d1d9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.chat-copy-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
