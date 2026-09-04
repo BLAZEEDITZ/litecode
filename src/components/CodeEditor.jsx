@@ -15,6 +15,7 @@ import OutputWindow from './OutputWindow';
 import OutputDetails from './OutputDetails';
 import FileExplorer from './FileExplorer';
 import InputModal from './InputModal';
+import AIChatbot from './AIChatbot';
 import useKeyPress from '../hooks/useKeyPress';
 import copy from 'copy-to-clipboard';
 import StopWatch from './StopWatch';
@@ -38,6 +39,7 @@ const CodeEditor = () => {
     const [theme, setTheme] = useState("");
     const [customInput, setCustomInput] = useState("");
     const [showInputModal, setShowInputModal] = useState(false);
+    const [showChatBall, setShowChatBall] = useState(false);
     const [outputDetails, setOutputDetails] = useState(null);
     const [processing, setProcessing] = useState(null);
     const [fullScreen, setFullScreen] = useState(false);
@@ -433,7 +435,11 @@ const handleFileSelect = (file) => {
                         <div className="navbar-divider" />
 
                         <div className="dropdownInner">
-                            <LanguagesDropdown onSelectChange={onSelectChange} Userlanguage={language} />
+                            <LanguagesDropdown 
+                                onSelectChange={onSelectChange} 
+                                Userlanguage={language} 
+                                onComingSoonClick={() => setShowChatBall(true)}
+                            />
                         </div>
                         <div className="dropdownInner">
                             <ThemeDropdown handleThemeChange={handleThemeChange} theme={theme} />
@@ -570,6 +576,8 @@ const handleFileSelect = (file) => {
                     </div>
                 </div>
             </div>
+
+            <AIChatbot visible={showChatBall} onDismiss={() => setShowChatBall(false)} />
         </>
     )
 }
